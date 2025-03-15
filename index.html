@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LangFlow Integration2221</title>
+    <title>LangFlow Integration</title>
     <style>
         /* Basic styling for the input and output fields */
         #promptInput {
@@ -23,53 +23,72 @@
         }
     </style>
 </head>
-    
 <body>
-    <h1>LangFlow RAG LLM Integration2221</h1>
+    <h1>LangFlow RAG LLM Integration000</h1>
     <input type="text" id="promptInput" placeholder="Enter your prompt">
     <button id="sendButton">Send</button>
     <p><strong>Response:</strong> <span id="responseText"></span></p>
 
     <script>
-        // JavaScript to call LangFlow API
-        async function sendPrompt() {
-            // Get the user's input
-            const prompt = document.getElementById('promptInput').value;
+        // Replace with your actual values
+        const BASE_API_URL = "https://api.langflow.astra.datastax.com";
+        const LANGFLOW_ID = "c6f791c3-4e37-4ffe-bb80-70d91dee7f1d"; // Your LangFlow ID
+        const FLOW_ID = "0cfa4355-1399-458f-9592-42a560fcdd18"; // Your Flow ID
+        const APPLICATION_TOKEN = "AstraCS:eZTrvkmgCkDOvCIlRBIXkvQu:e9585829f2900e7f1cfff7b06e7ac133f3413c8572c0408495a1001fce73a945"; // Replace with your actual token
 
-            // Replace with your LangFlow API endpoint and auth token
-            const flowId = 'c6f791c3-4e37-4ffe-bb80-70d91dee7f1d'; // Your Flow ID
-            const apiUrl = `"https://api.langflow.astra.datastax.com/lf/c6f791c3-4e37-4ffe-bb80-70d91dee7f1d/api/v1/run/0cfa4355-1399-458f-9592-42a560fcdd18?stream=false`;
-            const authToken = 'AstraCS:eZTrvkmgCkDOvCIlRBIXkvQu:e9585829f2900e7f1cfff7b06e7ac133f3413c8572c0408495a1001fce73a945'; // Your auth token
+        // Function to call the LangFlow API
+        async function runFlow(message) {
+            const apiUrl = `${BASE_API_URL}/lf/${LANGFLOW_ID}/api/v1/run/${FLOW_ID}`;
+
+            const payload = {
+                input_value: message,
+                output_type: "chat",
+                input_type: "chat",
+            };
+
+            const headers = {
+                "Authorization": `Bearer ${APPLICATION_TOKEN}`,
+                "Content-Type": "application/json"
+            };
 
             try {
-                // Send the prompt to LangFlow
                 const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify({ prompt: prompt })
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(payload)
                 });
 
-                // Check if the request was successful
                 if (response.ok) {
                     const data = await response.json();
-                    // Display the response from LangFlow
-                    document.getElementById('responseText').textContent = data.response; // Adjust based on the API response structure
+                    return data; // Return the API response
                 } else {
-                    console.error('Error:', response.statusText);
-                    document.getElementById('responseText').textContent = `Error: ${response.statusText}`;
+                    throw new Error(`Error: ${response.statusText}`);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('responseText').textContent = `Error: ${error.message}`;
+                console.error("Error:", error);
+                throw error;
+            }
+        }
+
+        // Function to handle the button click
+        async function sendPrompt() {
+            const prompt = document.getElementById("promptInput").value;
+
+            if (!prompt) {
+                alert("Please enter a prompt!");
+                return;
+            }
+
+            try {
+                const response = await runFlow(prompt);
+                document.getElementById("responseText").textContent = response.response; // Adjust based on the API response structure
+            } catch (error) {
+                document.getElementById("responseText").textContent = "Failed to get response. Check the console for details.";
             }
         }
 
         // Attach the function to the button click event
-        document.getElementById('sendButton').addEventListener('click', sendPrompt);
+        document.getElementById("sendButton").addEventListener("click", sendPrompt);
     </script>
-    
 </body>
 </html>
