@@ -1,45 +1,73 @@
-<h1>Test of HTML Below</h1>
-
-async function sendPrompt() {
-    // Get the user's input
-    const prompt = document.getElementById('promptInput').value;
-
-    // Replace with your LangFlow API endpoint and auth token
-    const flowId = 'c6f791c3-4e37-4ffe-bb80-70d91dee7f1d'; // Your Flow ID
-    const apiUrl = `https://api.langflow.astra.datastax.com/lf/${flowId}/api/v1/run`;
-    const authToken = 'AstraCS:eZTrvkmgCkDOvCIlRBIXkvQu:e9585829f2900e7f1cfff7b06e7ac133f3413c8572c0408495a1001fce73a945'; // Your auth token
-
-    try {
-        // Send the prompt to LangFlow
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
-            },
-            body: JSON.stringify({ prompt: prompt })
-        });
-
-        // Check if the request was successful
-        if (response.ok) {
-            const data = await response.json();
-            // Display the response from LangFlow
-            document.getElementById('responseText').textContent = data.response; // Adjust based on the API response structure
-        } else {
-            console.error('Error:', response.statusText);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangFlow Integration</title>
+    <style>
+        /* Basic styling for the input and output fields */
+        #promptInput {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-// Attach the function to the button click event
-document.getElementById('sendButton').addEventListener('click', sendPrompt);
-
-
-<div>
-    <h1>LangFlow Chat</h1>
+        #sendButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        #responseText {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>LangFlow RAG LLM Integration</h1>
     <input type="text" id="promptInput" placeholder="Enter your prompt">
     <button id="sendButton">Send</button>
     <p><strong>Response:</strong> <span id="responseText"></span></p>
-</div>
+
+    <script>
+        // JavaScript to call LangFlow API
+        async function sendPrompt() {
+            // Get the user's input
+            const prompt = document.getElementById('promptInput').value;
+
+            // Replace with your LangFlow API endpoint and auth token
+            const flowId = 'c6f791c3-4e37-4ffe-bb80-70d91dee7f1d'; // Your Flow ID
+            const apiUrl = `https://api.langflow.astra.datastax.com/lf/${flowId}/api/v1/run`;
+            const authToken = 'YOUR_AUTH_TOKEN'; // Your auth token
+
+            try {
+                // Send the prompt to LangFlow
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                // Check if the request was successful
+                if (response.ok) {
+                    const data = await response.json();
+                    // Display the response from LangFlow
+                    document.getElementById('responseText').textContent = data.response; // Adjust based on the API response structure
+                } else {
+                    console.error('Error:', response.statusText);
+                    document.getElementById('responseText').textContent = `Error: ${response.statusText}`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('responseText').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Attach the function to the button click event
+        document.getElementById('sendButton').addEventListener('click', sendPrompt);
+    </script>
+</body>
+</html>
