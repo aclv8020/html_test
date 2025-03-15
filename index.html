@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangFlow Integration</title>
     <style>
+        /* Basic styling for the input and output fields */
         #promptInput {
             width: 300px;
             padding: 10px;
@@ -29,44 +30,7 @@
     <p><strong>Response:</strong> <span id="responseText"></span></p>
 
     <script>
-        const BASE_API_URL = "https://api.langflow.astra.datastax.com";
-        const LANGFLOW_ID = "c6f791c3-4e37-4ffe-bb80-70d91dee7f1d"; // Your LangFlow ID
-        const FLOW_ID = "0cfa4355-1399-458f-9592-42a560fcdd18"; // Your Flow ID
-        const APPLICATION_TOKEN = "AstraCS:eZTrvkmgCkDOvCIlRBIXkvQu:e9585829f2900e7f1cfff7b06e7ac133f3413c8572c0408495a1001fce73a945"; // Replace with your actual token
-
-        async function runFlow(message) {
-            const apiUrl = `${BASE_API_URL}/lf/${LANGFLOW_ID}/api/v1/run/${FLOW_ID}`;
-
-            const payload = {
-                input_value: message,
-                output_type: "chat",
-                input_type: "chat",
-            };
-
-            const headers = {
-                "Authorization": `Bearer ${APPLICATION_TOKEN}`,
-                "Content-Type": "application/json"
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: headers,
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    return data; // Return the API response
-                } else {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                throw error;
-            }
-        }
-
+        // Function to send the prompt to the backend proxy
         async function sendPrompt() {
             const prompt = document.getElementById("promptInput").value;
 
@@ -76,13 +40,33 @@
             }
 
             try {
-                const response = await runFlow(prompt);
-                document.getElementById("responseText").textContent = response.response; // Adjust based on the API response structure
+                // Replace with your backend proxy URL
+                const backendUrl = "https://your-backend.herokuapp.com/send-prompt";
+
+                // Send the prompt to the backend proxy
+                const response = await fetch(backendUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Display the response from LangFlow
+                    document.getElementById("responseText").textContent = data.response; // Adjust based on the API response structure
+                } else {
+                    console.error("Error:", response.statusText);
+                    document.getElementById("responseText").textContent = "Failed to get response. Check the console for details.";
+                }
             } catch (error) {
+                console.error("Error:", error);
                 document.getElementById("responseText").textContent = "Failed to get response. Check the console for details.";
             }
         }
 
+        // Attach the function to the button click event
         document.getElementById("sendButton").addEventListener("click", sendPrompt);
     </script>
 </body>
