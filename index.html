@@ -1,25 +1,45 @@
 <h1>Test of HTML Below</h1>
 
-<div class="hf-space-wrapper" style="margin: 0 auto; max-width:800px;">
-  <form id="hf-space-form" style="display: flex; margin-bottom: 10px;">
-    <input type="text" id="hf-space-input" placeholder="Give a one sentence summary of what a beginner should do to exit this crypto cycle top properly" style="flex: 1; padding:8px; border:1px solid #ccc; border-radius:4px;" />
-    <button type="submit" style="padding:8px 12px; margin-left:5px; border:none; background:#007bff; color:#fff; border-radius:4px; cursor:pointer;">Send</button>
-  </form>
-  <iframe id="hf-space-iframe" src="https://andyhuggingvegas-pdfchat2.hf.space/" style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 4px;"></iframe>
+async function sendPrompt() {
+    // Get the user's input
+    const prompt = document.getElementById('promptInput').value;
+
+    // Replace with your LangFlow API endpoint and auth token
+    const flowId = 'c6f791c3-4e37-4ffe-bb80-70d91dee7f1d'; // Your Flow ID
+    const apiUrl = `https://api.langflow.astra.datastax.com/lf/${flowId}/api/v1/run`;
+    const authToken = 'AstraCS:eZTrvkmgCkDOvCIlRBIXkvQu:e9585829f2900e7f1cfff7b06e7ac133f3413c8572c0408495a1001fce73a945'; // Your auth token
+
+    try {
+        // Send the prompt to LangFlow
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ prompt: prompt })
+        });
+
+        // Check if the request was successful
+        if (response.ok) {
+            const data = await response.json();
+            // Display the response from LangFlow
+            document.getElementById('responseText').textContent = data.response; // Adjust based on the API response structure
+        } else {
+            console.error('Error:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Attach the function to the button click event
+document.getElementById('sendButton').addEventListener('click', sendPrompt);
+
+
+<div>
+    <h1>LangFlow Chat</h1>
+    <input type="text" id="promptInput" placeholder="Enter your prompt">
+    <button id="sendButton">Send</button>
+    <p><strong>Response:</strong> <span id="responseText"></span></p>
 </div>
-<script>
-  document.getElementById('hf-space-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const prompt = document.getElementById('hf-space-input').value;
-    const iframe = document.getElementById('hf-space-iframe');
-    
-    // Send the prompt to the iframe using the postMessage API
-    iframe.contentWindow.postMessage({
-      data: prompt,
-      target: "gradio"
-    }, "*");
-    
-    // Optional: Clear the input field after sending
-    document.getElementById('hf-space-input').value = '';
-  });
-</script>
