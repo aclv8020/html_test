@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangFlow Integration</title>
     <style>
-        /* Basic styling for the input and output fields */
         #promptInput {
             width: 300px;
             padding: 10px;
@@ -24,19 +23,17 @@
     </style>
 </head>
 <body>
-    <h1>LangFlow RAG LLM Integration000</h1>
+    <h1>LangFlow RAG LLM Integration</h1>
     <input type="text" id="promptInput" placeholder="Enter your prompt">
     <button id="sendButton">Send</button>
     <p><strong>Response:</strong> <span id="responseText"></span></p>
 
     <script>
-        // Replace with your actual values
         const BASE_API_URL = "https://api.langflow.astra.datastax.com";
         const LANGFLOW_ID = "c6f791c3-4e37-4ffe-bb80-70d91dee7f1d"; // Your LangFlow ID
         const FLOW_ID = "0cfa4355-1399-458f-9592-42a560fcdd18"; // Your Flow ID
         const APPLICATION_TOKEN = "AstraCS:eZTrvkmgCkDOvCIlRBIXkvQu:e9585829f2900e7f1cfff7b06e7ac133f3413c8572c0408495a1001fce73a945"; // Replace with your actual token
 
-        // Function to call the LangFlow API
         async function runFlow(message) {
             const apiUrl = `${BASE_API_URL}/lf/${LANGFLOW_ID}/api/v1/run/${FLOW_ID}`;
 
@@ -70,7 +67,6 @@
             }
         }
 
-        // Function to handle the button click
         async function sendPrompt() {
             const prompt = document.getElementById("promptInput").value;
 
@@ -87,7 +83,6 @@
             }
         }
 
-        // Attach the function to the button click event
         document.getElementById("sendButton").addEventListener("click", sendPrompt);
     </script>
 </body>
